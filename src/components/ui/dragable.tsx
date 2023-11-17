@@ -12,7 +12,7 @@ const Dragable = ({children}: Props) => {
 
   return (
     <motion.div
-      className='w-full h-full overflow-x-hidden'
+      className='w-full h-full overflow-x-hidden flex'
       ref={sliderRef}
       drag="x"
       initial={{ x: 0 }}

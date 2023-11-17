@@ -27,8 +27,6 @@ const LayoutMenu = React.forwardRef<
   return (
     <div
       className={cn("flex gap-10 w-full h-full", className)} 
-      // drag="x"
-      // dragControls={controls}
       ref={ref}
     >
       {children}
@@ -59,7 +57,7 @@ const MenuItem = React.forwardRef<
       </div>
       <div>{header}</div>
       {
-        active ? <motion.div layoutId='under-line' className='border-t-2 border-black w-full' /> : <></>
+        active ? <motion.div layoutId='under-line' className='border-t-2 border-black w-full' /> : <div className='border-t-2 border-gray-200 w-full opacity-0 group-hover:opacity-100'></div>
       }
     </motion.div>
   )

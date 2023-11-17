@@ -15,6 +15,9 @@ module.exports = {
       },
     },
     extend: {
+      transitionProperty: {
+        'height': 'height',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -24,6 +27,7 @@ module.exports = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          airbnb: "hsl(var(--primary-airbnb))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
