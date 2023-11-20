@@ -3,7 +3,7 @@ import React from 'react'
 import { forwardRef } from 'react'
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 
 const ButtonRound = forwardRef(({ children, className, ...props }: Props, ref: any) => {

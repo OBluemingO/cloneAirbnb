@@ -16,8 +16,9 @@ import { useSearchParams } from 'next/navigation'
 import { IoFilter } from "react-icons/io5";
 // import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
 import { Switch } from '../ui/switch'
+import { FaSearch } from "react-icons/fa";
 import useSetParams from '@/hook/useSetParams'
-import { motion } from 'framer-motion'
+import { ScrollArea } from '../ui/scroll-area'
 
 const Navbar = () => {
   const menu = [
@@ -61,43 +62,54 @@ const Navbar = () => {
     // }))
   }
 
+  const handleClickSearch = () => {
+    console.log('first')
+  }
+
   const isFirstMenu = menu.findIndex(el => el.topic === currentCategorie) === 0
   const isLastMenu = menu.findIndex(el => el.topic === currentCategorie) === menu.length - 1
   const hiddenArrowRight = isLastMenu ? 'lg:opacity-0  pointer-events-none' : 'lg:opacity-100 pointer-events-auto'
   const hiddenArrowLeft = isFirstMenu ? 'lg:opacity-0  pointer-events-none' : 'lg:opacity-100 pointer-events-auto'
 
+
   return (
     <>
-      <nav 
-        className="bg-white flex items-center px-[80px] text-header border-b justify-between"
-      >
-        <div className='flex justify-start flex-1'>
-          <div className='flex items-center gap-4'>
-            <div className='w-[40px] h-full'>
+      <nav className="bg-white items-center px-[5%] lg:px-[80px] text-header md:border-b justify-between md:flex h-[80px]">
+        <div className="hidden md:flex justify-start flex-1">
+          <div className="flex items-center gap-4">
+            <div className="w-[40px] h-full">
               <Image
                 alt={`logo-airbnb`}
                 src={`https://seeklogo.com/images/A/airbnb-logo-1D03C48906-seeklogo.com.png`}
-                loading={'lazy'}
+                loading={"lazy"}
                 width={100}
                 height={100}
               />
             </div>
-            <div className='text-primary-airbnb font-semibold'>airbnb</div>
+            <div className="text-primary-airbnb font-semibold hidden lg:block">
+              airbnb
+            </div>
+            <NavbarSearch className="block lg:hidden" />
           </div>
         </div>
-        <div className='justify-center hidden h-auto w-auto xl:flex'>
-          <NavbarSearch />
-        </div>
-        <div className='flex justify-end flex-1'>
-          <div className='text-black text-header flex items-center gap-4'>
-            <div className='hidden lg:block p-2 rounded-full hover:bg-gray-100 cursor-pointer'>Airbnb your home</div>
-            <button className='p-2 rounded-full hover:bg-gray-100 cursor-pointer' type={'button'}><TfiWorld /></button>
+        <NavbarSearch className="hidden lg:block" />
+        <div className="hidden md:flex justify-end flex-1 ">
+          <div className="text-black text-header flex items-center gap-4">
+            <div className="hidden lg:block p-2 rounded-full hover:bg-gray-100 cursor-pointer truncate">
+              Airbnb your home
+            </div>
+            <button
+              className="p-2 rounded-full hover:bg-gray-100 cursor-pointer"
+              type={"button"}
+            >
+              <TfiWorld />
+            </button>
             <ButtonRound>
-              <div className='flex gap-3 items-center'>
-                <div className='p-2 rounded-full hover:bg-gray-100 cursor-pointer'>
-                  <GiHamburgerMenu  />
+              <div className="flex gap-3 items-center">
+                <div className="p-2 rounded-full hover:bg-gray-100 cursor-pointer">
+                  <GiHamburgerMenu />
                 </div>
-                <Avatar className='h-[27px] w-[27px]'>
+                <Avatar className="h-[27px] w-[27px]">
                   <AvatarImage src="" />
                   <AvatarFallback>P</AvatarFallback>
                 </Avatar>
@@ -105,51 +117,48 @@ const Navbar = () => {
             </ButtonRound>
           </div>
         </div>
+        {/* note: mobile */}
+        <div className="flex items-center w-full h-full gap-2 md:hidden">
+          <ButtonRound className='px-4 flex flex-grow min-h-[54px] shadow-md'>
+            <div className='grid place-items-center'><FaSearch /></div>
+            <div className='flex flex-col'>
+              <div className='text-sm line-clamp-1'>any where</div>
+              <div className='text-xs line-clamp-1'>week any time •  add rental into rest </div>
+            </div>
+          </ButtonRound>
+          <ButtonRound className='min-h-[54px] w-[54px] px-0 grid place-items-center'><IoFilter /></ButtonRound>
+        </div>
       </nav>
-      <nav className="h-[80px] mt-[10px] bg-white flex items-center px-[80px] text-header gap-[10px] justify-between text-xs">
-        <LayoutMenu className={'items-center w-full lg:w-[62.5%] overflow-x-auto relative no-scrollbar'}>
-          {/* <div className={clsx('group h-full grid place-items-center px-5 transition-all sticky left-0', isFirstMenu ? `` : `bg-gradient-to-r from-white`)}>
-            <ButtonRound
-              className={clsx('px-2 py-1 cursor-pointer relative z-20', hiddenArrowLeft)}
-              onClick={() => handleClickMenu('left')}
-            >
-              <RxChevronLeft style={{ color: '#5e5e5e', fontSize: '1.5rem' }} />
-            </ButtonRound>
-            <div className={clsx('bg-gray-200 w-full h-full absolute z-10 rounded-full blur-sm opacity-0', isFirstMenu ? `group-hover:opacity-0` : ` group-hover:opacity-100`)}></div>
-          </div> */}
+      <nav className="h-[80px] mt-[10px] bg-white flex items-center px-[5%] lg:px-[80px] text-header gap-[30px] justify-between text-xs border-b md:border-none">
+        <LayoutMenu
+          className={
+            "items-center w-full relative"
+          }
+        >
           {menu.map((el, idx) => (
             <MenuItem
               header={el.topic.charAt(0).toUpperCase() + el.topic.slice(1)}
               logo={el.logo}
               active={currentCategorie == el.topic}
               key={`${el.topic}-${idx}`}
-              className='group'
+              className="group"
             />
           ))}
-          {/* <div className={clsx('group h-3/4 grid place-items-center px-5 transition-all sticky right-0', isLastMenu ? `` : `bg-gradient-to-l from-white`)}>
-            <ButtonRound
-              className={clsx('px-2 py-1 cursor-pointer relative z-20', hiddenArrowRight)}
-              onClick={() => handleClickMenu('right')}
-            >
-              <RxChevronRight style={{ color: '#5e5e5e', fontSize: '1.5rem' }} />
-            </ButtonRound>
-            <div className={clsx('bg-gray-200 w-full h-full absolute z-10 rounded-full blur-sm opacity-0', isLastMenu ? `group-hover:opacity-0` : ` group-hover:opacity-100`)}></div>
-          </div> */}
         </LayoutMenu>
-        <div className={`w-auto h-full items-center gap-4 justify-end hidden lg:flex`}>
-          <ButtonRound className='w-fit flex gap-2 items-center cursor-pointer px-4 h-[44px]'>
+        <div
+          className={`w-auto h-full items-center gap-4 justify-end hidden md:flex`}
+        >
+          <ButtonRound className="w-fit flex gap-2 items-center cursor-pointer px-4 h-[44px]">
             Filter <IoFilter />
           </ButtonRound>
-          <ButtonRound className='w-fit min-w-[250px] flex items-center px-4 h-[44px]'>
-            <p>
-              Display total before taxes
-            </p>
+          <ButtonRound className="w-fit min-w-[250px] flex items-center px-4 h-[44px]">
+            <p>Display total before taxes</p>
             <Switch />
           </ButtonRound>
         </div>
       </nav>
     </>
-  )
+  );
 }
 
 export default Navbar

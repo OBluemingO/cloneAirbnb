@@ -2,8 +2,8 @@
 import { motion, useDragControls } from 'framer-motion'
 import { cn } from "@/lib/utils"
 import React from "react"
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import useSetParams from '@/hook/useSetParams'
+import { ScrollArea, ScrollBar } from "./scroll-area";
 
 interface Props {
   logo: React.ReactNode
@@ -25,12 +25,16 @@ const LayoutMenu = React.forwardRef<
   const controls = useDragControls()
   
   return (
-    <div
-      className={cn("flex gap-10 w-full h-full", className)} 
-      ref={ref}
-    >
-      {children}
-    </div>
+      <ScrollArea
+        className={cn("flex gap-10 w-full h-full", className)} 
+        ref={ref}
+        scrollHidden={true}
+      >
+        <div className='flex w-max space-x-10 p-4'>
+          {children}
+        </div>
+        <ScrollBar orientation='horizontal' />
+      </ScrollArea>
   )
 })
 
