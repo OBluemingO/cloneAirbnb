@@ -61,7 +61,10 @@ const NavbarSearch = ({className, ...props}: IProps) => {
         }, 300);
         break
       default:
-        return
+        setIsPopCalendarEnd(false)
+        setIsPopCalendarStart(false)
+        setIsPopCalendarGroup(false)
+        setIsPopSearchDestination(false)
     }
 
     return () => Timmer ? clearTimeout(Timmer) : undefined
@@ -78,6 +81,28 @@ const NavbarSearch = ({className, ...props}: IProps) => {
   const handleClickHostName = (e: React.MouseEvent<HTMLButtonElement>) => {
     const current = (e.target as HTMLDivElement).innerText
     setHostMenu(current)
+  }
+
+  const handleOnPointerDownOutside = (e: any) => {
+    const buttonFindAddress = !popoverRef.current[0].contains(e.target as Node)
+    const buttonCheckin = !popoverRef.current[1].contains(e.target as Node)
+    const buttonCheckout = !popoverRef.current[2].contains(e.target as Node)
+
+    if (isPopSearchDestination && buttonFindAddress) {
+      setIsPopSearchDestination(false)
+    }
+    if (isPopCalendarStart && buttonCheckin) {
+      setIsPopCalendarStart(false)
+      // setIsPopCalendarGroup(prev => !isPopCalendarEnd ? false : prev)
+    }
+    if (isPopCalendarEnd && buttonCheckout) {
+      setIsPopCalendarEnd(false)
+      // setIsPopCalendarGroup(prev => !isPopCalendarStart ? false : prev)
+    }
+  }
+
+  const handleOnFocusInput = () => {
+    isPopSearchDestination && refInput.current[0].focus()
   }
 
   return (
@@ -230,10 +255,14 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                         ref={(el) => (el ? (refInput.current[0] = el) : null)}
                         onClick={() => {
                           setIsPopSearchDestination(true)
+                          setIsPopCalendarGroup(false)
                         }}
                       />
                     </div>
-                    <div className='flex' onClick={() => setIsPopCalendarGroup(true)}>
+                    <div 
+                      className='flex'
+                      onClick={() => setIsPopCalendarGroup(true)}
+                    >
                       <div
                         ref={(el) => el ? (popoverRef.current[1] = el) : null}
                       >
@@ -245,9 +274,7 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                           title={"Check In"}
                           placeHolder="Add dates"
                           placeHolderAlign={'center'}
-                          onClick={() => {
-                            setIsPopCalendarStart(true)
-                          }}
+                          onClick={() => setIsPopCalendarStart(true)}
                           disableInput
                         />
                       </div>
@@ -259,9 +286,7 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                             "py-0 px-3 h-full w-[130px] text-center",
                             isPopCalendarEnd ? 'bg-gray-100 shadow-xl' : ''
                           )}
-                          onClick={() => {
-                            setIsPopCalendarEnd(true)
-                          }}
+                          onClick={() => setIsPopCalendarEnd(true)}
                           title={"Check Out"}
                           placeHolder="Add dates"
                           placeHolderAlign={'center'}
@@ -274,19 +299,8 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                 <PopoverContent
                   className='w-[848px] h-[500px] mt-3 rounded-3xl'
                   align='start'
-                  onOpenAutoFocus={() => {
-                    isPopSearchDestination && refInput.current[0].focus()
-                  }}
-                  onPointerDownOutside={(e) => {
-                    const buttonFindAddress = !popoverRef.current[0].contains(e.target as Node)
-                    const buttonCheckin = !popoverRef.current[1].contains(e.target as Node)
-                    const buttonCheckout = !popoverRef.current[2].contains(e.target as Node)
-
-                    if (isPopSearchDestination && buttonFindAddress) setIsPopSearchDestination(false)
-                    if (isPopCalendarStart && buttonCheckin) setIsPopCalendarStart(false)
-                    if (isPopCalendarEnd && buttonCheckout) setIsPopCalendarEnd(false)
-                    
-                  }}
+                  onOpenAutoFocus={handleOnFocusInput}
+                  onPointerDownOutside={handleOnPointerDownOutside}
                 >
                   {isPopSearchDestination ?
                     <motion.div
