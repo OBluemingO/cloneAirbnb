@@ -30,6 +30,7 @@ const NavbarSearch = ({className, ...props}: IProps) => {
   const [hostMenu, setHostMenu] = useState<string>('')
 
   const [isPopSearchDestination, setIsPopSearchDestination] = useState<boolean>(false)
+  const [isPopCalendarGroup, setIsPopCalendarGroup] = useState<boolean>(false)
   const [isPopCalendarStart, setIsPopCalendarStart] = useState<boolean>(false)
   const [isPopCalendarEnd, setIsPopCalendarEnd] = useState<boolean>(false)
 
@@ -37,7 +38,6 @@ const NavbarSearch = ({className, ...props}: IProps) => {
   const ref = useRef() as MutableRefObject<HTMLDivElement>
   const refInput = useRef<any[]>([])
   const buttonRef = useRef<HTMLButtonElement[]>([])
-  // const popoverRef = useRef<React.FC<PopoverProps>[]>([])
   const popoverRef = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
@@ -51,6 +51,13 @@ const NavbarSearch = ({className, ...props}: IProps) => {
         setHostMenu('stays')
         Timmer = setTimeout(() => {
           setIsPopSearchDestination(true)
+        }, 300);
+        break
+      case 'Any week':
+        setHostMenu('stays')
+        Timmer = setTimeout(() => {
+          setIsPopCalendarStart(true)
+          setIsPopCalendarGroup(true)
         }, 300);
         break
       default:
@@ -205,7 +212,7 @@ const NavbarSearch = ({className, ...props}: IProps) => {
               className="min-h-[66px] h-full w-[848px] p-0 overflow-hidden shadow-xl gap-0 border-[1px]"
             >
               <Popover 
-                open={isPopSearchDestination || isPopCalendarStart || isPopCalendarEnd} 
+                open={isPopSearchDestination || isPopCalendarGroup} 
               >
                 <PopoverTrigger asChild>
                   <div className='flex'>
@@ -214,51 +221,53 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                       ref={(el) => el ? (popoverRef.current[0] = el) : null}
                      >
                       <Input
-                        className={cn("relative py-0 px-8 h-full text-left ", isPopSearchDestination ? 'bg-gray-100 shadow-xl' : '')}
+                        className={cn(
+                          "relative py-0 px-8 h-full text-left ",
+                          isPopSearchDestination ? 'bg-gray-100 shadow-xl' : '')
+                        }
                         title={"Where"}
                         placeHolder="Search destinations"
                         ref={(el) => (el ? (refInput.current[0] = el) : null)}
                         onClick={() => {
                           setIsPopSearchDestination(true)
-                          // setisPopCalendarStart(false)
                         }}
                       />
                     </div>
-                    <div
-                      ref={(el) => el ? (popoverRef.current[1] = el) : null}
-                    >
-                      <Input
-                        className={cn(
-                          "py-0 px-3 h-full w-[130px] text-center",
-                          isPopCalendarStart ? 'bg-gray-100' : ''
-                        )}
-                        title={"Check In"}
-                        placeHolder="Add dates"
-                        placeHolderAlign={'center'}
-                        onClick={() => {
-                          setIsPopCalendarStart(true)
-                        }}
-                        // ref={(el) => (el ? (refInput.current[1] = el) : null)}
-                        disableInput
-                      />
-                    </div>
-                    <div
-                      ref={(el) => el ? (popoverRef.current[2] = el) : null}
-                    >
-                      <Input
-                        className={cn(
-                          "py-0 px-3 h-full w-[130px] text-center",
-                          // isPopSearchDestination ? 'bg-gray-100' : ''
-                        )}
-                        onClick={() => {
-                          setIsPopCalendarEnd(true)
-                        }}
-                        title={"Check Out"}
-                        placeHolder="Add dates"
-                        placeHolderAlign={'center'}
-                        // ref={(el) => (el ? (refInput.current[1] = el) : null)}
-                        disableInput
-                      />
+                    <div className='flex' onClick={() => setIsPopCalendarGroup(true)}>
+                      <div
+                        ref={(el) => el ? (popoverRef.current[1] = el) : null}
+                      >
+                        <Input
+                          className={cn(
+                            "py-0 px-3 h-full w-[130px] text-center",
+                            isPopCalendarStart ? 'bg-gray-100 shadow-xl' : ''
+                          )}
+                          title={"Check In"}
+                          placeHolder="Add dates"
+                          placeHolderAlign={'center'}
+                          onClick={() => {
+                            setIsPopCalendarStart(true)
+                          }}
+                          disableInput
+                        />
+                      </div>
+                      <div
+                        ref={(el) => el ? (popoverRef.current[2] = el) : null}
+                      >
+                        <Input
+                          className={cn(
+                            "py-0 px-3 h-full w-[130px] text-center",
+                            isPopCalendarEnd ? 'bg-gray-100 shadow-xl' : ''
+                          )}
+                          onClick={() => {
+                            setIsPopCalendarEnd(true)
+                          }}
+                          title={"Check Out"}
+                          placeHolder="Add dates"
+                          placeHolderAlign={'center'}
+                          disableInput
+                        />
+                      </div>
                     </div>
                   </div>
                 </PopoverTrigger>
@@ -273,29 +282,28 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                     const buttonCheckin = !popoverRef.current[1].contains(e.target as Node)
                     const buttonCheckout = !popoverRef.current[2].contains(e.target as Node)
 
-                    if(isPopSearchDestination && buttonFindAddress) setIsPopSearchDestination(false)
-                    if(isPopCalendarStart && buttonCheckin) setIsPopCalendarStart(false)
-                    if(isPopCalendarEnd && buttonCheckout ) setIsPopCalendarEnd(false)
+                    if (isPopSearchDestination && buttonFindAddress) setIsPopSearchDestination(false)
+                    if (isPopCalendarStart && buttonCheckin) setIsPopCalendarStart(false)
+                    if (isPopCalendarEnd && buttonCheckout) setIsPopCalendarEnd(false)
+                    
                   }}
                 >
-                  {
-                    isPopSearchDestination ?
-                      <div className='flex w-full h-full'>
-                        <div className='flex-1'>
-                          <RecentSearch />
-                        </div>
-                        <div className='h-full w-[1px] bg-gray-100'></div>
-                        <div className='flex-1'>
-                          <SearchByRegion />
-                        </div>
+                  {isPopSearchDestination ?
+                    <motion.div
+                      className='flex w-full h-full'
+                    >
+                      <div className='flex-1'>
+                        <RecentSearch />
                       </div>
-                      : <></>
-                  }
-                  {
-                    isPopCalendarStart || isPopCalendarEnd ?
-                      <div className='flex h-full bg-black'>mock mock</div>
-                    : <></>
-                  }
+                      <div className='h-full w-[1px] bg-gray-100'></div>
+                      <div className='flex-1'>
+                        <SearchByRegion />
+                      </div>
+                    </motion.div>
+                    : <></>}
+                  {isPopCalendarGroup ?
+                    <div className='flex h-full bg-black'>mock mock</div>
+                    : <></>}
                 </PopoverContent>
               </Popover>
             </ButtonRound>
