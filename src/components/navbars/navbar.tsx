@@ -74,27 +74,31 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-white items-center px-[5%] lg:px-[80px] text-header md:border-b justify-between md:flex h-[80px]">
+      {/* <nav className="bg-white items-center px-[5%] lg:px-[80px] text-header md:border-b justify-between md:flex h-[80px]"> */}
+      {/* <nav className="bg-white items-center px-[5%] lg:px-[80px] text-header md:border-b justify-between md:flex h-auto"> */}
+      <nav className="bg-white px-[5%] lg:px-[80px] text-header md:border-b justify-between md:flex h-auto">
         <div className="hidden md:flex justify-start flex-1">
-          <div className="flex items-center gap-4">
-            <div className="w-[40px] h-full">
+          <div className="flex items-center gap-4 h-[80px] relative z-[3]">
+            <div className="w-[40px] inset-1">
               <Image
                 alt={`logo-airbnb`}
                 src={`https://seeklogo.com/images/A/airbnb-logo-1D03C48906-seeklogo.com.png`}
                 loading={"lazy"}
-                width={100}
-                height={100}
+                width={0}
+                height={0}
+                style={{ width: '100%', height: '100%' }}
+                layout='responsive'
               />
             </div>
             <div className="text-primary-airbnb font-semibold hidden lg:block">
               airbnb
             </div>
-            <NavbarSearch className="block lg:hidden" />
+            <NavbarSearch className="flex lg:hidden" />
           </div>
         </div>
-        <NavbarSearch className="hidden lg:block" />
-        <div className="hidden md:flex justify-end flex-1 ">
-          <div className="text-black text-header flex items-center gap-4">
+        <NavbarSearch className="hidden lg:flex" />
+        <div className="hidden md:flex justify-end flex-1 relative z-[3] ">
+          <div className="text-black text-header flex items-center gap-4 h-[80px]">
             <div className="hidden lg:block p-2 rounded-full hover:bg-gray-100 cursor-pointer truncate">
               Airbnb your home
             </div>

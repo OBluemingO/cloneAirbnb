@@ -28,7 +28,7 @@ const RecentSearch = () => {
       <div className='w-full overflow-hidden'>
         <ScrollArea className='w-full h-full'>
           {country_name.map((el, idx) => (
-            <div className='px-6 h-[48px] mb-2 bg-gray-100 flex items-center gap-3 cursor-pointer' key={`${el}_${idx}`}>
+            <div className='px-6 h-[48px] mb-2 hover:bg-gray-100 flex items-center gap-3 cursor-pointer' key={`${el}_${idx}`}>
               <div className='bg-[#DDDDDD] p-2 rounded-md'>
                 <FaRegClock />
               </div>

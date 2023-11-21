@@ -6,6 +6,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   title: string;
   placeHolder?: string;
   disableInput?: boolean
+  placeHolderAlign?: 'left' | 'center' | 'right'
 }
 
 interface IInputHandle {
@@ -13,7 +14,7 @@ interface IInputHandle {
 }
 
 const Input = forwardRef(
-  ({ title, placeHolder, className, disableInput, ...props }: Props, ref: ForwardedRef<IInputHandle>) => {
+  ({ title, placeHolder, className, disableInput, placeHolderAlign = 'left', ...props }: Props, ref: ForwardedRef<IInputHandle>) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     useImperativeHandle<IInputHandle, IInputHandle>(ref, () => ({
@@ -27,22 +28,23 @@ const Input = forwardRef(
     return (
       <div
         className={cn(
-          "bg-green-200 hover:bg-secondary flex flex-col justify-center rounded-full cursor-pointer focus:shadow-sm",
+          "hover:bg-secondary flex flex-col justify-center rounded-full cursor-pointer focus:shadow-sm",
           className
         )}
         {...props}
       >
         <div className="">{title}</div>
-        <span className="w-full overflow-hidden">
+        <div className="">
+          {/* {placeHolder} */}
           <input
             className={clsx(
-              "focus:outline-none bg-transparent",
+              `focus:outline-none bg-transparent w-full text-${placeHolderAlign}`,
               disableInput ? "cursor-pointer pointer-events-none" : ""
             )}
             placeholder={placeHolder}
             ref={inputRef}
           />
-        </span>
+        </div>
       </div>
     );
   }
