@@ -22,7 +22,6 @@ const LayoutMenu = React.forwardRef<
   HTMLDivElement,
   LayoutProps
 >(({ children, className }, ref) => {
-  const controls = useDragControls()
   
   return (
       <ScrollArea

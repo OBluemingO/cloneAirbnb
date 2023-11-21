@@ -12,6 +12,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../ui/popover"
+import RecentSearch from '../ui/recentSearch';
+import SearchByRegion from '../ui/searchByRegion';
 
 interface IShowAddionalState {
   status: boolean
@@ -19,16 +21,24 @@ interface IShowAddionalState {
 }
 
 interface IProps extends Partial<HTMLDivElement> {}
+interface Aa extends  Partial< HTMLInputElement>{
+  focus(): void
+}
 
 const NavbarSearch = ({className, ...props}: IProps) => {
   const [showAddtionalMenu, setShowAddtionalMenu] = useState<IShowAddionalState>({
     status: false,
     current: ''
   })
-  const ref = useRef<HTMLDivElement>()
-  const refInput = useRef<HTMLInputElement[]>() as MutableRefObject<HTMLInputElement[]>
-  // const refInput = useRef(Array.from({length: 4}, a => a as RefObject<HTMLInputElement>))
+  const ref = useRef() as MutableRefObject<HTMLDivElement>
+  // const refInput = useRef([]) as MutableRefObject<HTMLInputElement[]>
+  // const refInput = useRef<HTMLInputElement[]>([])
+  const refInput = useRef<any[]>([])
   const buttonRef = useRef<HTMLButtonElement[]>([])
+
+  // useEffect(() => {
+  //   refInput.current = Array.from({ length: 4 }, (_, idx) => refInput.current![idx] || null)
+  // },[])
 
   useEffect(() => {
     document.documentElement.style.overflowY = showAddtionalMenu.status ? 'hidden' : 'auto'
@@ -70,7 +80,6 @@ const NavbarSearch = ({className, ...props}: IProps) => {
       current,
       status: true,
     })
-
   }
 
   return (
@@ -127,22 +136,32 @@ const NavbarSearch = ({className, ...props}: IProps) => {
         </div>
         <div className="flex-auto flex justify-center">
           <form>
-            <ButtonRound className="min-h-[66px] w-[848px] p-0 overflow-hidden shadow-xl gap-0">
+            <ButtonRound 
+              className="min-h-[66px] w-[848px] p-0 overflow-hidden shadow-xl gap-0"
+            >
               <Popover>
-                <PopoverTrigger
-                  onClick={() => {
-                    console.log(refInput.current);
-                  }}
-                >
+                <PopoverTrigger>
                   <Input
-                    className="py-0 px-8"
+                    className="py-0 px-8 h-full text-left"
                     title={"Where"}
                     placeHolder="Search destinations"
-                    ref={(el) => (el ? refInput.current.push(el) : null)}
+                    ref={(el) => (el ? (refInput.current[0] = el) : null)}
                   />
                 </PopoverTrigger>
-                <PopoverContent>
-                  Place content for the popover here.
+                <PopoverContent 
+                  className='w-[848px] h-[500px] mt-3 rounded-3xl'
+                  align='start' 
+                  onOpenAutoFocus={() => refInput.current[0].focus()}
+                >
+                  <div className='flex w-full h-full'>
+                    <div className='flex-1'>
+                      <RecentSearch />
+                    </div>
+                    <div className='h-full w-[1px] bg-gray-100'></div>
+                    <div className='flex-1'>
+                      <SearchByRegion />
+                    </div>
+                  </div>
                 </PopoverContent>
               </Popover>
               <Input

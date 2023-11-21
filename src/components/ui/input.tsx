@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
-import React, { HTMLAttributes, forwardRef, useImperativeHandle, useRef } from "react";
+import React, { ForwardedRef, HTMLAttributes, forwardRef, useImperativeHandle, useRef } from "react";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -8,8 +8,22 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   disableInput?: boolean
 }
 
-const Input = forwardRef<HTMLInputElement, Props>(
-  ({ title, placeHolder, className, disableInput, ...props }, ref) => {
+interface IInputHandle {
+  focus(): void
+}
+
+const Input = forwardRef(
+  ({ title, placeHolder, className, disableInput, ...props }: Props, ref: ForwardedRef<IInputHandle>) => {
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    useImperativeHandle<IInputHandle, IInputHandle>(ref, () => ({
+      focus() {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }
+    }), []);
+
     return (
       <div
         className={cn(
@@ -26,12 +40,14 @@ const Input = forwardRef<HTMLInputElement, Props>(
               disableInput ? "cursor-pointer pointer-events-none" : ""
             )}
             placeholder={placeHolder}
-            ref={ref}
+            ref={inputRef}
           />
         </span>
       </div>
     );
   }
 );
+
+Input.displayName = '';
 
 export default Input;
