@@ -20,8 +20,6 @@ const Popover = React.forwardRef<
 
 Popover.displayName = PopoverPrimitive.Root.displayName
 
-// const Popover = PopoverPrimitive.Root
-
 const PopoverTrigger = PopoverPrimitive.Trigger
 
 const PopoverContent = React.forwardRef<

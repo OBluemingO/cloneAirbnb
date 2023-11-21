@@ -30,6 +30,8 @@ const NavbarSearch = ({className, ...props}: IProps) => {
     status: false,
     current: ''
   })
+  const [disableButton, setDisableButton] = useState<boolean>(false)
+
   const ref = useRef() as MutableRefObject<HTMLDivElement>
   // const refInput = useRef([]) as MutableRefObject<HTMLInputElement[]>
   // const refInput = useRef<HTMLInputElement[]>([])
@@ -139,7 +141,10 @@ const NavbarSearch = ({className, ...props}: IProps) => {
             <ButtonRound 
               className="min-h-[66px] w-[848px] p-0 overflow-hidden shadow-xl gap-0"
             >
-              <Popover>
+              <Popover 
+                open={disableButton} 
+                onOpenChange={(e: any) => disableButton ? null : setDisableButton(e)}
+              >
                 <PopoverTrigger>
                   <Input
                     className="py-0 px-8 h-full text-left"
@@ -151,7 +156,7 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                 <PopoverContent 
                   className='w-[848px] h-[500px] mt-3 rounded-3xl'
                   align='start' 
-                  onOpenAutoFocus={() => refInput.current[0].focus()}
+                  onOpenAutoFocus={(e) => refInput.current[0].focus()}
                 >
                   <div className='flex w-full h-full'>
                     <div className='flex-1'>
