@@ -14,6 +14,11 @@ import {
 } from "../ui/popover"
 import RecentSearch from '../ui/recentSearch';
 import SearchByRegion from '../ui/searchByRegion';
+import { Calendar } from '../ui/calendar';
+import { Calendar as CalendarIcon } from "lucide-react"
+import { addDays, format, addYears } from "date-fns"
+import { DateRange } from 'react-day-picker';
+import { is } from 'date-fns/locale';
 
 interface IShowAddionalState {
   status: boolean
@@ -21,6 +26,60 @@ interface IShowAddionalState {
 }
 
 interface IProps extends Partial<HTMLDivElement> {}
+interface ICheckInComponentProps {
+  isPopCalendarGroup: boolean
+}
+
+const CheckInComponent = ({ isPopCalendarGroup }: ICheckInComponentProps) => {
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 2),
+  })
+  const [menu, setMenu] = useState('Dates')
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const current = (e.target as HTMLDivElement).innerText
+    setMenu(current)
+  }
+  if (!isPopCalendarGroup) return <></>
+
+  return (
+    <div className='flex flex-col items-center'>
+      <ButtonRound className='max-h-none px-2 w-fit border-none bg-gray-200'>
+        <ButtonRound
+          className={cn('border-none bg-transparent cursor-pointer', menu === 'Dates' ? 'bg-white' : '')}
+          onClick={handleClick}
+        >
+          Dates
+        </ButtonRound>
+        <ButtonRound
+          className={cn('border-none bg-transparent cursor-pointer', menu === 'Months' ? 'bg-white' : '')}
+          onClick={handleClick}
+        >
+          Months
+        </ButtonRound>
+        <ButtonRound
+          className={cn('border-none bg-transparent cursor-pointer', menu === 'Flexible' ? 'bg-white' : '')}
+          onClick={handleClick}
+        >
+          Flexible
+        </ButtonRound>
+      </ButtonRound>
+      {
+        menu == 'Dates' ?
+          <Calendar
+            className='w-full h-full pt-12 scale-110'
+            initialFocus
+            mode="range"
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={setDate}
+            numberOfMonths={2}
+          />
+          : <></>
+      }
+    </div>
+  )
+}
 
 const NavbarSearch = ({className, ...props}: IProps) => {
   const [showAddtionalMenu, setShowAddtionalMenu] = useState<IShowAddionalState>({
@@ -33,6 +92,10 @@ const NavbarSearch = ({className, ...props}: IProps) => {
   const [isPopCalendarGroup, setIsPopCalendarGroup] = useState<boolean>(false)
   const [isPopCalendarStart, setIsPopCalendarStart] = useState<boolean>(false)
   const [isPopCalendarEnd, setIsPopCalendarEnd] = useState<boolean>(false)
+  // const [date, setDate] = React.useState<DateRange | undefined>({
+  //   from: new Date(2022, 0, 20),
+  //   to: addDays(new Date(2022, 0, 20), 20),
+  // })
 
 
   const ref = useRef() as MutableRefObject<HTMLDivElement>
@@ -102,7 +165,7 @@ const NavbarSearch = ({className, ...props}: IProps) => {
   }
 
   const handleOnFocusInput = () => {
-    isPopSearchDestination && refInput.current[0].focus()
+    if (isPopSearchDestination) refInput.current[0].focus()
   }
 
   return (
@@ -297,8 +360,8 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                   </div>
                 </PopoverTrigger>
                 <PopoverContent
-                  className='w-[848px] h-[500px] mt-3 rounded-3xl'
-                  align='start'
+                  className={cn('w-[848px] h-[500px] mt-3 rounded-3xl')} 
+                  align={'start'}
                   onOpenAutoFocus={handleOnFocusInput}
                   onPointerDownOutside={handleOnPointerDownOutside}
                 >
@@ -315,9 +378,25 @@ const NavbarSearch = ({className, ...props}: IProps) => {
                       </div>
                     </motion.div>
                     : <></>}
-                  {isPopCalendarGroup ?
-                    <div className='flex h-full bg-black'>mock mock</div>
-                    : <></>}
+                    <CheckInComponent isPopCalendarGroup={isPopCalendarGroup} />
+                  {/* {isPopCalendarGroup ?
+                    <div className='flex flex-col items-center'>
+                      <ButtonRound className='max-h-none px-2 w-fit border-none bg-gray-200'>
+                        <ButtonRound className='border-none'>Dates</ButtonRound>
+                        <ButtonRound className='border-none'>Months</ButtonRound>
+                        <ButtonRound className='border-none'>Flexible</ButtonRound>
+                      </ButtonRound>
+                      <Calendar
+                        className='w-full h-full'
+                        initialFocus
+                        mode="range"
+                        defaultMonth={date?.from}
+                        selected={date}
+                        onSelect={setDate}
+                        numberOfMonths={2}
+                      />
+                    </div>
+                    : <></>} */}
                 </PopoverContent>
               </Popover>
             </ButtonRound>
