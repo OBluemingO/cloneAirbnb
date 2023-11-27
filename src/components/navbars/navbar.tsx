@@ -97,8 +97,8 @@ const Navbar = () => {
           </div>
         </div>
         <NavbarSearch className="hidden lg:flex" />
-        <div className="hidden md:flex justify-end flex-1 relative z-[3] ">
-          <div className="text-black text-header flex items-center gap-4 h-[80px]">
+        <div className="hidden md:flex justify-end flex-1 ">
+          <div className="text-black text-header flex items-center gap-4 h-[80px] z-[3]">
             <div className="hidden lg:block p-2 rounded-full hover:bg-gray-100 cursor-pointer truncate">
               Airbnb your home
             </div>
