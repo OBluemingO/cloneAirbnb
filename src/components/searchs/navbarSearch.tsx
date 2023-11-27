@@ -19,6 +19,7 @@ import { Calendar as CalendarIcon } from "lucide-react"
 import { addDays, format, addYears } from "date-fns"
 import { DateRange } from 'react-day-picker';
 import { TbPlusMinus } from "react-icons/tb";
+import Image from 'next/image';
 
 interface IShowAddionalState {
   status: boolean
@@ -194,19 +195,15 @@ const NavbarSearch = ({ className, ...props }: IProps) => {
     if (isPopSearchDestination) refInput.current[0].focus()
   }
 
-  // const delayPopoverWidth = () => {
-  //   const timmer = setTimeout(() => {
-  //     return isPopGuest
-  //   }, 300);
-  //   return timmer
+  // write fn that that params and convert into salt value
+  // const salt = (value: string) => {
+  //   const salt = 0
+  //   const saltValue = value.split('').map((item) => {
+  //     const salt = item.charCodeAt(0)
+  //     return salt
+  //   })
+  //   return saltValue
   // }
-
-  // const delayPopover = useMemo(() => {
-  //   setTimeout(() => {
-  //     console.log('first')
-  //   }, 1000);
-  //   return isPopGuest
-  // }, [isPopGuest])
 
   return (
     <>
@@ -442,7 +439,17 @@ const NavbarSearch = ({ className, ...props }: IProps) => {
                   <CheckInComponent isPopCalendarGroup={isPopCalendarGroup} />
                   {isPopGuest ?
                     <div className='flex w-full h-full'>
-                      <div className='flex-1 px-4 pt-2'></div>
+                      <div className='flex-1 px-4 py-2 relative rounded-md overflow-hidden'>
+                          <Image
+                            alt={`place-holder-image`}
+                            src={`https://www.ezeeabsolute.com/blog/wp-content/uploads/2019/06/guest_experience_hotel-1.jpg`}
+                            loading={"lazy"}
+                            quality={100}
+                            className='object-cover'
+                            fill
+                          />
+                        <div className='absolute left-0 bottom-0 w-full h-1/4 bg-gradient-to-t from-black opacity-50'></div>
+                      </div>
                       <div className='h-full w-[1px] bg-gray-100'></div>
                       <div className='flex-1 px-4 pt-2'>Search by region</div>
                     </div>
