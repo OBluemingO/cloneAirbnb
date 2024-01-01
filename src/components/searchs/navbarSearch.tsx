@@ -1,10 +1,8 @@
 'use client'
-import React, { useEffect, useRef, useState, MutableRefObject, useDebugValue, useMemo } from 'react'
+import React, { useEffect, useRef, useState, MutableRefObject, useMemo } from 'react'
 import ButtonRound from '../buttons/buttonRound'
 import { FaSearch } from "react-icons/fa";
 import { motion } from 'framer-motion'
-import { navbarSearchAnimate } from './animate'
-import clsx from 'clsx';
 import { cn } from '@/lib/utils';
 import Input from '../ui/input';
 import {
@@ -12,14 +10,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../ui/popover"
-import RecentSearch from '../ui/recentSearch';
-import SearchByRegion from '../ui/searchByRegion';
-import { Calendar } from '../ui/calendar';
-import { Calendar as CalendarIcon } from "lucide-react"
-import { addDays, format, addYears } from "date-fns"
-import { DateRange } from 'react-day-picker';
-import { TbPlusMinus } from "react-icons/tb";
-import Image from 'next/image';
+// import RecentSearch from '../ui/recentSearch';
+// import SearchByRegion from '../ui/searchByRegion';
+// import { Calendar } from '../ui/calendar';
+// import { Calendar as CalendarIcon } from "lucide-react"
+// import { addDays, format, addYears } from "date-fns"
+// import { DateRange } from 'react-day-picker';
+// import { TbPlusMinus } from "react-icons/tb";
+// import Image from 'next/image';
+import DatePickCheckInContent from '../ui/datepickCheckInContent';
+import SearchRegionDestinationContent from '../ui/searchRegionDestinationContent';
+import GuestContent from '../ui/guestContent';
 
 interface IShowAddionalState {
   status: boolean
@@ -27,95 +28,15 @@ interface IShowAddionalState {
 }
 
 interface IProps extends Partial<HTMLDivElement> { }
-interface ICheckInComponentProps {
-  isPopCalendarGroup: boolean
-}
 
-const CheckInComponent = ({ isPopCalendarGroup }: ICheckInComponentProps) => {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: undefined,
-    to: undefined,
-  })
-  const [menu, setMenu] = useState('Dates')
-  const [exactDates, setExactDates] = useState<number>(0)
-
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const current = (e.target as HTMLDivElement).innerText
-    setMenu(current)
-  }
-
-  if (!isPopCalendarGroup) return <></>
-  
-  const getCurrentMonth = () => {
-    const date = new Date()
-    const month = date.getMonth()
-    const year = date.getFullYear()
-    return new Date(year, month)
-  } 
-
-  return (
-    <div className='flex flex-col items-center h-full'>
-      <ButtonRound className='max-h-none px-2 w-fit border-none bg-gray-200'>
-        <ButtonRound
-          className={cn('border-none bg-transparent cursor-pointer', menu === 'Dates' ? 'bg-white' : '')}
-          onClick={handleClick}
-        >
-          Dates
-        </ButtonRound>
-        <ButtonRound
-          className={cn('border-none bg-transparent cursor-pointer', menu === 'Months' ? 'bg-white' : '')}
-          onClick={handleClick}
-        >
-          Months
-        </ButtonRound>
-        <ButtonRound
-          className={cn('border-none bg-transparent cursor-pointer', menu === 'Flexible' ? 'bg-white' : '')}
-          onClick={handleClick}
-        >
-          Flexible
-        </ButtonRound>
-      </ButtonRound>
-      {
-        menu == 'Dates' ?
-          <div className='w-full h-full relative'>
-            <Calendar
-              className='w-full h-auto pt-6'
-              initialFocus
-              mode="range"
-              defaultMonth={date?.from}
-              fromMonth={getCurrentMonth()}
-              selected={date}
-              onSelect={setDate}
-              numberOfMonths={2}
-              showOutsideDays={false}
-            />
-            <div className='absolute bottom-0 left-0 px-7 w-full flex gap-2'>
-              {Array.from({length: 5}, (_, idx) => idx == 4 ? 7 : idx).map((item, index) => (
-                <ButtonRound 
-                  className={cn('max-h-[32px] py-1 px-3 text-xs cursor-pointer w-auto gap-1', exactDates == item ? 'border-black' : 'border-gray-200')}
-                  key={`button-${index}-checkin-${item}`}
-                  onClick={() => setExactDates(item)}
-                >
-                  <div className='grid place-items-center'> 
-                    {item != 0 ? <TbPlusMinus /> : <></>}
-                  </div>
-                  {item == 0 ? 'Exact dates' : `${item} days`}
-                </ButtonRound>
-              ))}
-            </div>
-          </div>
-          : <></>
-      }
-    </div>
-  )
-}
+type THostMenu = 'stays' | 'Experiences' | 'Online Experiences' | (string & {})
 
 const NavbarSearch = ({ className, ...props }: IProps) => {
   const [showAddtionalMenu, setShowAddtionalMenu] = useState<IShowAddionalState>({
     status: false,
     current: ''
   })
-  const [hostMenu, setHostMenu] = useState<string>('')
+  const [hostMenu, setHostMenu] = useState<THostMenu>('')
   const [isPopSearchDestination, setIsPopSearchDestination] = useState<boolean>(false)
   const [isPopCalendarGroup, setIsPopCalendarGroup] = useState<boolean>(false)
   const [isPopCalendarStart, setIsPopCalendarStart] = useState<boolean>(false)
@@ -126,6 +47,10 @@ const NavbarSearch = ({ className, ...props }: IProps) => {
   const refInput = useRef<any[]>([])
   const buttonRef = useRef<HTMLButtonElement[]>([])
   const popoverRef = useRef<HTMLDivElement[]>([])
+
+  const groupHostMenu = useMemo(() => {
+    return ['stays', 'Experiences', 'Online Experiences']
+  }, [])
 
   useEffect(() => {
     document.documentElement.style.overflowY = showAddtionalMenu.status ? 'hidden' : 'auto'
@@ -208,21 +133,21 @@ const NavbarSearch = ({ className, ...props }: IProps) => {
   return (
     <>
       <motion.div
-        className={cn('justify-center items-center h-[80px]', className)}
+        className={cn("justify-center items-center h-[80px]", className)}
         animate={{
           opacity: showAddtionalMenu.status ? 0 : 100,
-          height: showAddtionalMenu.status ? '175px' : '80px',
+          height: showAddtionalMenu.status ? "175px" : "80px",
           scale: showAddtionalMenu.status ? 1.25 : 1,
         }}
       >
         <ButtonRound
-          className={clsx(
+          className={cn(
             "justify-between flex transition-all overflow-hidden px-2"
           )}
           ref={ref}
         >
           <div
-            className={clsx(
+            className={cn(
               "justify-between transition-all overflow-hidden flex"
             )}
           >
@@ -260,20 +185,26 @@ const NavbarSearch = ({ className, ...props }: IProps) => {
       </motion.div>
       <motion.div
         className="w-full absolute top-0 left-0 flex flex-col bg-white"
-        initial={{ opacity: 0, zIndex: -1, height: 'h-[80px]' }}
+        initial={{ opacity: 0, zIndex: -1, height: "h-[80px]" }}
         animate={{
           opacity: showAddtionalMenu.status ? 100 : 0,
           zIndex: showAddtionalMenu.status ? 2 : -1,
-          height: showAddtionalMenu.status ? 'h-[175px]' : 'h-[80px]',
+          height: showAddtionalMenu.status ? "h-[175px]" : "h-[80px]",
         }}
       >
         <motion.div
           className="md:h-[180px] lg:h-[80px] flex justify-center items-center text-black gap-10 relative bg-white"
-          initial={{ transform: 'translateY(-100%)' }}
-          animate={{ transform: showAddtionalMenu.status ? 'translateY(0%)' : 'translateY(-100%)' }}
+          initial={{ transform: "translateY(-100%)" }}
+          animate={{
+            transform: showAddtionalMenu.status
+              ? "translateY(0%)"
+              : "translateY(-100%)",
+          }}
         >
-          <button
-            className={cn(`
+          {groupHostMenu.map((item, index) => (
+            <button
+              className={cn(
+                `
               after:absolute 
               after:left-0 after:bottom-0
               after:w-full after:h-[1px]
@@ -283,177 +214,121 @@ const NavbarSearch = ({ className, ...props }: IProps) => {
               after:transition-all
               after:duration-500
             `,
-              hostMenu === 'stays' ?
-                'after:opacity-100 after:scale-100 after:bg-black'
-                : 'after:opacity-0 after:scale-0 after:bg-gray-200')}
-            onClick={handleClickHostName}
-          >
-            stays
-          </button>
-          <button
-            className={cn(`
-              after:absolute 
-              after:left-0 after:bottom-0
-              after:w-full after:h-[1px]
-              hover:after:opacity-100 
-              hover:after:scale-100
-              relative
-              after:transition-all
-              after:duration-500
-            `,
-              hostMenu === 'Experiences' ?
-                'after:opacity-100 after:scale-100 after:bg-black'
-                : 'after:opacity-0 after:scale-0 after:bg-gray-200')}
-            onClick={handleClickHostName}
-          >
-            Experiences
-          </button>
-          <button
-            className={cn(`
-              after:absolute 
-              after:left-0 after:bottom-0
-              after:w-full after:h-[1px]
-              hover:after:opacity-100 
-              hover:after:scale-100
-              relative
-              after:transition-all
-              after:duration-500
-            `,
-              hostMenu === 'Online Experiences' ?
-                'after:opacity-100 after:scale-100 after:bg-black'
-                : 'after:opacity-0 after:scale-0 after:bg-gray-200')}
-            onClick={handleClickHostName}
-          >
-            Online Experiences
-          </button>
+                hostMenu === item
+                  ? "after:opacity-100 after:scale-100 after:bg-black"
+                  : "after:opacity-0 after:scale-0 after:bg-gray-200"
+              )}
+              onClick={handleClickHostName}
+              key={`button-host-menu-${index}`}
+            >
+              {item}
+            </button>
+          ))}
         </motion.div>
         <motion.div
           className="flex-auto flex justify-center z-[4]"
           initial={{ scale: 0.4, height: 0 }}
-          animate={{ scale: showAddtionalMenu.status ? 1 : 0.4, height: showAddtionalMenu.status ? '95px' : 0 }}
+          animate={{
+            scale: showAddtionalMenu.status ? 1 : 0.4,
+            height: showAddtionalMenu.status ? "95px" : 0,
+          }}
         >
           <form>
-            <ButtonRound
-              className="min-h-[66px] h-full w-[848px] p-0 overflow-hidden shadow-xl gap-0 border-[1px]"
-            >
+            <ButtonRound className="min-h-[66px] h-full w-[848px] p-0 overflow-hidden shadow-xl gap-0 border-[1px]">
               <Popover
-                open={isPopSearchDestination || isPopCalendarGroup || isPopGuest}
+                open={
+                  isPopSearchDestination || isPopCalendarGroup || isPopGuest
+                }
               >
                 <PopoverTrigger asChild>
-                  <div className='flex'>
+                  <div className="flex">
                     <div
-                      className='h-full'
-                      ref={(el) => el ? (popoverRef.current[0] = el) : null}
+                      className="h-full"
+                      ref={(el) => (el ? (popoverRef.current[0] = el) : null)}
                     >
                       <Input
                         className={cn(
                           "relative py-0 px-8 h-full text-left ",
-                          isPopSearchDestination ? 'bg-gray-100 shadow-xl' : '')
-                        }
+                          isPopSearchDestination ? "bg-gray-100 shadow-xl" : ""
+                        )}
                         title={"Where"}
                         placeHolder="Search destinations"
                         ref={(el) => (el ? (refInput.current[0] = el) : null)}
                         onClick={() => {
-                          setIsPopSearchDestination(true)
+                          setIsPopSearchDestination(true);
                         }}
-                        typeof='button'
+                        typeof="button"
                       />
                     </div>
                     <div
-                      className='flex'
+                      className="flex"
                       onClick={() => {
-                        setIsPopCalendarGroup(true)
+                        setIsPopCalendarGroup(true);
                       }}
-                      typeof='button'
+                      typeof="button"
                     >
                       <div
-                        ref={(el) => el ? (popoverRef.current[1] = el) : null}
+                        ref={(el) => (el ? (popoverRef.current[1] = el) : null)}
                       >
                         <Input
                           className={cn(
                             "py-0 px-3 h-full w-[130px] text-center",
-                            isPopCalendarStart ? 'bg-gray-100 shadow-xl' : ''
+                            isPopCalendarStart ? "bg-gray-100 shadow-xl" : ""
                           )}
                           title={"Check In"}
                           placeHolder="Add dates"
-                          placeHolderAlign={'center'}
+                          placeHolderAlign={"center"}
                           onClick={() => setIsPopCalendarStart(true)}
                           disableInput
                         />
                       </div>
                       <div
-                        ref={(el) => el ? (popoverRef.current[2] = el) : null}
+                        ref={(el) => (el ? (popoverRef.current[2] = el) : null)}
                       >
                         <Input
                           className={cn(
                             "py-0 px-3 h-full w-[130px] text-center",
-                            isPopCalendarEnd ? 'bg-gray-100 shadow-xl' : ''
+                            isPopCalendarEnd ? "bg-gray-100 shadow-xl" : ""
                           )}
                           onClick={() => setIsPopCalendarEnd(true)}
                           title={"Check Out"}
                           placeHolder="Add dates"
-                          placeHolderAlign={'center'}
+                          placeHolderAlign={"center"}
                           disableInput
                         />
                       </div>
                     </div>
                     <div
-                      className='h-full'
-                      ref={(el) => el ? (popoverRef.current[3] = el) : null}
+                      className="h-full"
+                      ref={(el) => (el ? (popoverRef.current[3] = el) : null)}
                     >
                       <Input
                         className={cn(
                           "relative py-0 px-8 h-full text-left ",
-                          isPopGuest ? 'bg-gray-100 shadow-xl' : '')
-                        }
+                          isPopGuest ? "bg-gray-100 shadow-xl" : ""
+                        )}
                         title={"Who"}
                         placeHolder="Add guests"
                         onClick={() => {
-                          setIsPopGuest(true)
+                          setIsPopGuest(true);
                         }}
-                        typeof='button'
+                        typeof="button"
                         disableInput
                       />
                     </div>
                   </div>
                 </PopoverTrigger>
                 <PopoverContent
-                  className={cn('mt-3 rounded-3xl w-[848px] h-[500px]')}
-                  align={'start'}
+                  className={cn("mt-3 rounded-3xl w-[848px] h-[500px]")}
+                  align={"start"}
                   onOpenAutoFocus={handleOnFocusInput}
                   onPointerDownOutside={handleOnPointerDownOutside}
                 >
-                  {isPopSearchDestination ?
-                    <motion.div
-                      className='flex w-full h-full'
-                    >
-                      <div className='flex-1'>
-                        <RecentSearch />
-                      </div>
-                      <div className='h-full w-[1px] bg-gray-100'></div>
-                      <div className='flex-1'>
-                        <SearchByRegion />
-                      </div>
-                    </motion.div>
-                    : <></>}
-                  <CheckInComponent isPopCalendarGroup={isPopCalendarGroup} />
-                  {isPopGuest ?
-                    <div className='flex w-full h-full'>
-                      <div className='flex-1 px-4 py-2 relative rounded-md overflow-hidden'>
-                          <Image
-                            alt={`place-holder-image`}
-                            src={`https://www.ezeeabsolute.com/blog/wp-content/uploads/2019/06/guest_experience_hotel-1.jpg`}
-                            loading={"lazy"}
-                            quality={100}
-                            className='object-cover'
-                            fill
-                          />
-                        <div className='absolute left-0 bottom-0 w-full h-1/4 bg-gradient-to-t from-black opacity-50'></div>
-                      </div>
-                      <div className='h-full w-[1px] bg-gray-100'></div>
-                      <div className='flex-1 px-4 pt-2'>Search by region</div>
-                    </div>
-                    : <></>}
+                  <SearchRegionDestinationContent
+                    isOpen={isPopSearchDestination}
+                  />
+                  <DatePickCheckInContent isOpen={isPopCalendarGroup} />
+                  <GuestContent isOpen={isPopGuest} />
                 </PopoverContent>
               </Popover>
             </ButtonRound>
@@ -461,10 +336,14 @@ const NavbarSearch = ({ className, ...props }: IProps) => {
         </motion.div>
       </motion.div>
       <motion.div
-        className='bg-black w-full h-screen absolute top-0 left-0'
-        initial={{ opacity: 0, z: -1, display: 'none' }}
-        animate={{ opacity: showAddtionalMenu.status ? '10%' : 0, zIndex: showAddtionalMenu.status ? 1 : -1, display: showAddtionalMenu.status ? 'block' : 'none' }}
-        onClick={() => setShowAddtionalMenu({ status: false, current: '' })}
+        className="bg-black w-full h-screen absolute top-0 left-0"
+        initial={{ opacity: 0, z: -1, display: "none" }}
+        animate={{
+          opacity: showAddtionalMenu.status ? "10%" : 0,
+          zIndex: showAddtionalMenu.status ? 1 : -1,
+          display: showAddtionalMenu.status ? "block" : "none",
+        }}
+        onClick={() => setShowAddtionalMenu({ status: false, current: "" })}
       />
     </>
   );

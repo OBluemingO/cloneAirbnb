@@ -29,7 +29,7 @@ const LayoutMenu = React.forwardRef<
         ref={ref}
         scrollHidden={true}
       >
-        <div className='flex w-max space-x-10 p-4'>
+        <div className={cn('flex w-max space-x-10 px-4 pb-3 md:px-4 md:pt-4 md:pb-0')}>
           {children}
         </div>
         <ScrollBar orientation='horizontal' />

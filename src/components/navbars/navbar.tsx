@@ -14,11 +14,9 @@ import { LayoutMenu, MenuItem } from '../ui/menu'
 import { GiCampingTent, GiFamilyHouse  } from "react-icons/gi";
 import { useSearchParams } from 'next/navigation'
 import { IoFilter } from "react-icons/io5";
-// import { RxChevronLeft, RxChevronRight } from "react-icons/rx";
 import { Switch } from '../ui/switch'
 import { FaSearch } from "react-icons/fa";
 import useSetParams from '@/hook/useSetParams'
-import { ScrollArea } from '../ui/scroll-area'
 
 const Navbar = () => {
   const menu = [
@@ -53,30 +51,12 @@ const Navbar = () => {
     setCurrentCategorie(cateName)
   }, [cateName])
 
-  const handleClickMenu = (direct: 'left' | 'right') => {
-    // const newActiveMenu = direct === 'right' ? menu.findIndex(el => el.topic === cate) + 1 : menu.findIndex(el => el.topic === cate) - 1
-    // if (newActiveMenu < 0 || newActiveMenu > menu.length - 1) return
-    // setRawQuery((prev) => ({
-    //   ...prev,
-    //   cate: menu[newActiveMenu].topic
-    // }))
-  }
-
-  const handleClickSearch = () => {
-    console.log('first')
-  }
-
-  const isFirstMenu = menu.findIndex(el => el.topic === currentCategorie) === 0
-  const isLastMenu = menu.findIndex(el => el.topic === currentCategorie) === menu.length - 1
-  const hiddenArrowRight = isLastMenu ? 'lg:opacity-0  pointer-events-none' : 'lg:opacity-100 pointer-events-auto'
-  const hiddenArrowLeft = isFirstMenu ? 'lg:opacity-0  pointer-events-none' : 'lg:opacity-100 pointer-events-auto'
-
 
   return (
     <>
       {/* <nav className="bg-white items-center px-[5%] lg:px-[80px] text-header md:border-b justify-between md:flex h-[80px]"> */}
       {/* <nav className="bg-white items-center px-[5%] lg:px-[80px] text-header md:border-b justify-between md:flex h-auto"> */}
-      <nav className="bg-white px-[5%] lg:px-[80px] text-header md:border-b justify-between md:flex h-auto">
+      <nav className="bg-white h-[80px] px-[5%] lg:px-[80px] text-header justify-between md:flex md:h-auto sticky top-0">
         <div className="hidden md:flex justify-start flex-1">
           <div className="flex items-center gap-4 h-[80px] relative z-[3]">
             <div className="w-[40px] inset-1">
@@ -133,7 +113,7 @@ const Navbar = () => {
           <ButtonRound className='min-h-[54px] w-[54px] px-0 grid place-items-center'><IoFilter /></ButtonRound>
         </div>
       </nav>
-      <nav className="h-[80px] mt-[10px] bg-white flex items-center px-[5%] lg:px-[80px] text-header gap-[30px] justify-between text-xs border-b md:border-none">
+      <nav className="border-b h-auto md:h-[80px] md:pt-[10px] bg-white flex items-center px-[5%] lg:px-[80px] text-header gap-[30px] justify-between text-xs md:border-none sticky top-[85px]">
         <LayoutMenu
           className={
             "items-center w-full relative"
